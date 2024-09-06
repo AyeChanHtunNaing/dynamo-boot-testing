@@ -6,7 +6,6 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,26 +13,15 @@ import org.springframework.context.annotation.Configuration;
 @EnableDynamoDBRepositories(basePackages = "dev.peacechan.repository")
 public class DynamoDBConfig {
 
-    @Value("${aws.dynamodb.endpoint}")
-    private String endpoint;
-
-    @Value("${aws.dynamodb.region}")
-    private String region;
-
-    @Value("${aws.dynamodb.access-key}")
-    private String accessKey;
-
-    @Value("${aws.dynamodb.secret-key}")
-    private String secretKey;
-
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region))
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(
+                        "http://localhost:8000", // DynamoDB local endpoint
+                        "ap-northeast-2"          // AWS region
+                ))
+                .withCredentials(new AWSStaticCredentialsProvider(
+                        new BasicAWSCredentials("test", "test"))) // Use your own credentials
                 .build();
     }
-
 }
-
-
