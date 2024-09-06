@@ -21,7 +21,7 @@ public class DynamoDBConfig {
                         "ap-northeast-2"          // AWS region
                 ))
                 .withCredentials(new AWSStaticCredentialsProvider(
-                        new BasicAWSCredentials("test", "test"))) // Use your own credentials
+                        new BasicAWSCredentials("test", "test"))) // AWS credentials
                 .build();
     }
 }
