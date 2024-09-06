@@ -28,6 +28,8 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<aws.sdk.version>2.21.14</aws.sdk.version>
+		<spring-data-dynamodb.version>5.2.5</spring-data-dynamodb.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -45,11 +47,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
+		<!-- AWS SDK DynamoDB Enhanced -->
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-dynamodb</artifactId>
-			<version>1.12.770</version>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>dynamodb-enhanced</artifactId>
+			<version>${aws.sdk.version}</version>
+		</dependency>
+
+		<!-- Spring Data DynamoDB -->
+		<dependency>
+			<groupId>io.github.boostchicken</groupId>
+			<artifactId>spring-data-dynamodb</artifactId>
+			<version>${spring-data-dynamodb.version}</version>
 		</dependency>
 
 	</dependencies>

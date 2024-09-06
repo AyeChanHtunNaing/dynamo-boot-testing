@@ -1,28 +1,45 @@
 package dev.peacechan.controller;
 
+
+
 import dev.peacechan.entity.Employee;
-import dev.peacechan.repository.EmployeeRepository;
+import dev.peacechan.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@RequestMapping("/employees")
 public class EmployeeController {
-    private EmployeeRepository employeeRepository;
 
-    @PostMapping("employee")
-    public Employee saveEmployee(Employee employee){
-        return employeeRepository.save(employee);
+    @Autowired
+    private EmployeeService employeeService;
+
+
+    @PostMapping
+    public Employee saveEmployee(@RequestBody Employee employee) {
+        return new ResponseEntity<>(employeeService.saveEmployee(employee),HttpStatus.OK).getBody();
+    }
+    @GetMapping
+    public Iterable<Employee> getAllEmployees() {
+        return  new ResponseEntity<>(employeeService.getAllEmployees(),HttpStatus.OK).getBody() ;
     }
 
-    @GetMapping("/employee/{id}")
-    public Employee getEmployee(@PathVariable("id") String employeeId){
-        return employeeRepository.getEmployeeById(employeeId);
+    @GetMapping("/{id}")
+    public Employee getEmployee(@PathVariable("id") String employeeId) {
+        return new ResponseEntity<>(employeeService.getEmployee(employeeId).orElse(null),HttpStatus.OK).getBody();
     }
-    @DeleteMapping("/employee/{id}")
-    public String deleteEmployee(@PathVariable("id") String employeeId){
-        return employeeRepository.delete(employeeId);
+
+    @DeleteMapping("/{id}")
+    public String deleteEmployee(@PathVariable("id") String employeeId) {
+        return new ResponseEntity<>(employeeService.deleteEmployee(employeeId),HttpStatus.OK).getBody();
     }
-    @PutMapping("/employee/{id}")
-    public String upodateEmployeee(@PathVariable("id") String employeeId,@RequestBody Employee employee){
-        return employeeRepository.update(employeeId,employee);
+
+    @PutMapping("/{id}")
+    public Employee updateEmployee(@PathVariable("id") String employeeId, @RequestBody Employee employee) {
+        return new ResponseEntity<>(employeeService.updateEmployee(employeeId,employee),HttpStatus.OK).getBody();
     }
 }
