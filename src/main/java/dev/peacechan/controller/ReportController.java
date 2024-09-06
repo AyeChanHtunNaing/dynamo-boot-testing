@@ -1,8 +1,8 @@
 package dev.peacechan.controller;
 
 import dev.peacechan.entity.Employee;
-import dev.peacechan.service.ReportService;
 import dev.peacechan.service.EmployeeService;
+import dev.peacechan.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/reports")
 public class ReportController {
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -25,20 +26,45 @@ public class ReportController {
 
     @GetMapping("/export/csv")
     public ResponseEntity<byte[]> exportEmployeesToCsv() {
-        List<Employee> employees = (List<Employee>) employeeService.getAllEmployees();
-        byte[] csvData = reportService.exportToCsv(employees);
+        try {
+            // Fetch employees
+            List<Employee> employees = (List<Employee>) employeeService.getAllEmployees();
+            if (employees == null || employees.isEmpty()) {
+                // Return an empty CSV file with a 204 No Content status
+                return ResponseEntity.noContent().build();
+            }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "employees.csv");
-        headers.setContentLength(csvData.length);
+            // Export to CSV
+            byte[] csvData = reportService.exportToCsv(employees);
+            if (csvData.length == 0) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Failed to generate CSV file".getBytes());
+            }
 
-        return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
+            // Set headers and return response
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "employees.csv");
+            headers.setContentLength(csvData.length);
+
+            return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while exporting CSV".getBytes());
+        }
     }
 
     @GetMapping("/report")
     public ResponseEntity<String> generateReport() {
-        reportService.printReport();
-        return ResponseEntity.ok("Report generated. Check logs for details.");
+        try {
+            // Generate report
+            reportService.printReport();
+            return ResponseEntity.ok("Report generated. Check logs for details.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while generating the report");
+        }
     }
 }
