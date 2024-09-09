@@ -3,6 +3,7 @@ package dev.peacechan.controller;
 import dev.peacechan.entity.Employee;
 import dev.peacechan.service.EmployeeService;
 import dev.peacechan.service.ReportService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Tag(name = "Employee", description = "the Report API")
 @RestController
 @RequestMapping("/reports")
 public class ReportController {

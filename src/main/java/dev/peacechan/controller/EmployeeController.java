@@ -4,11 +4,13 @@ package dev.peacechan.controller;
 
 import dev.peacechan.entity.Employee;
 import dev.peacechan.service.EmployeeService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Employee", description = "the Employee API")
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
