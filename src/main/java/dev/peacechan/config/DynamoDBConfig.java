@@ -17,7 +17,7 @@ public class DynamoDBConfig {
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(
-                        "http://localhost:8000", // DynamoDB local endpoint
+                        "http://localhost:8001", // DynamoDB local endpoint
                         "ap-northeast-2"          // AWS region
                 ))
                 .withCredentials(new AWSStaticCredentialsProvider(

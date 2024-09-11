@@ -142,7 +142,7 @@ public class ReportService {
         double averageTime = (double) totalTimes / times.size();
         double averageMemoryUsage = (double) totalMemoryUsages / memoryUsages.size();
 
-        System.out.printf("Average CSV Export Time: %.2f ms%n", averageTime);
+        System.out.printf("Average CSV Export/Import Time: %.2f ms%n", averageTime);
         System.out.printf("Average Memory Usage: %.2f bytes%n", averageMemoryUsage);
     }
 }
