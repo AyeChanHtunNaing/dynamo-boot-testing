@@ -20,14 +20,17 @@ import java.util.List;
 
 @Component
 public class ReportService {
+
     @Autowired
     private EmployeeRepository employeeRepository;
+
     @Value("${csv.export.dir}")
     private String csvExportDir;
 
-    private List<Long> times = new ArrayList<>();
-    private List<Long> memoryUsages = new ArrayList<>();
-    
+    private List<Long> exportTimes = new ArrayList<>();
+    private List<Long> exportMemoryUsages = new ArrayList<>();
+    private List<Long> importTimes = new ArrayList<>();
+    private List<Long> importMemoryUsages = new ArrayList<>();
 
     public byte[] exportToCsv(List<Employee> employees) {
         long startTime = System.currentTimeMillis();
@@ -62,7 +65,6 @@ public class ReportService {
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error writing or reading CSV file: " + e.getMessage());
             return new byte[0];
         } finally {
             long endTime = System.currentTimeMillis();
@@ -71,12 +73,12 @@ public class ReportService {
             long timeTaken = endTime - startTime;
             long memoryUsed = endMemory - startMemory;
 
-            times.add(timeTaken);
-            memoryUsages.add(memoryUsed);
+            exportTimes.add(timeTaken);
+            exportMemoryUsages.add(memoryUsed);
 
-            // Log or store time and memory usage
+            // Log time and memory usage
             System.out.printf("CSV Export Time: %d ms%n", timeTaken);
-            System.out.printf("Memory Used: %d bytes%n", memoryUsed);
+            System.out.printf("Memory Used for Export: %d bytes%n", memoryUsed);
         }
     }
 
@@ -122,27 +124,43 @@ public class ReportService {
             long timeTaken = endTime - startTime;
             long memoryUsed = endMemory - startMemory;
 
-            times.add(timeTaken);
-            memoryUsages.add(memoryUsed);
+            importTimes.add(timeTaken);
+            importMemoryUsages.add(memoryUsed);
 
-            // Log or store time and memory usage
+            // Log time and memory usage
             System.out.printf("CSV Import Time: %d ms%n", timeTaken);
-            System.out.printf("Memory Used: %d bytes%n", memoryUsed);
+            System.out.printf("Memory Used for Import: %d bytes%n", memoryUsed);
         }
     }
+
     public void printReport() {
-        if (times.isEmpty() || memoryUsages.isEmpty()) {
+        if (exportTimes.isEmpty() && importTimes.isEmpty()) {
             System.out.println("No data to report.");
             return;
         }
 
-        long totalTimes = times.stream().mapToLong(Long::longValue).sum();
-        long totalMemoryUsages = memoryUsages.stream().mapToLong(Long::longValue).sum();
+        // Calculate average export time and memory usage
+        if (!exportTimes.isEmpty()) {
+            long totalExportTime = exportTimes.stream().mapToLong(Long::longValue).sum();
+            long totalExportMemoryUsage = exportMemoryUsages.stream().mapToLong(Long::longValue).sum();
 
-        double averageTime = (double) totalTimes / times.size();
-        double averageMemoryUsage = (double) totalMemoryUsages / memoryUsages.size();
+            double averageExportTime = (double) totalExportTime / exportTimes.size();
+            double averageExportMemoryUsage = (double) totalExportMemoryUsage / exportMemoryUsages.size();
 
-        System.out.printf("Average CSV Export/Import Time: %.2f ms%n", averageTime);
-        System.out.printf("Average Memory Usage: %.2f bytes%n", averageMemoryUsage);
+            System.out.printf("Average CSV Export Time: %.2f ms%n", averageExportTime);
+            System.out.printf("Average Memory Usage for Export: %.2f bytes%n", averageExportMemoryUsage);
+        }
+
+        // Calculate average import time and memory usage
+        if (!importTimes.isEmpty()) {
+            long totalImportTime = importTimes.stream().mapToLong(Long::longValue).sum();
+            long totalImportMemoryUsage = importMemoryUsages.stream().mapToLong(Long::longValue).sum();
+
+            double averageImportTime = (double) totalImportTime / importTimes.size();
+            double averageImportMemoryUsage = (double) totalImportMemoryUsage / importMemoryUsages.size();
+
+            System.out.printf("Average CSV Import Time: %.2f ms%n", averageImportTime);
+            System.out.printf("Average Memory Usage for Import: %.2f bytes%n", averageImportMemoryUsage);
+        }
     }
 }
